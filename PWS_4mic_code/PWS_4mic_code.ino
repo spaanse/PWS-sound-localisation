@@ -33,6 +33,28 @@ const float RY = 0.975;
 const float RZ = 0.985;
 unsigned long Time;
 
+//Als tijd ongedefinieerd:
+//Zet tijd als huidige tijd
+void AInterrupt(){
+  ALow = micros();
+  disablePCINT(digitalPinToPCINT(4));
+}
+
+void BInterrupt(){
+  BLow = micros();
+  disablePCINT(digitalPinToPCINT(5));
+}
+
+void CInterrupt(){
+  CLow = micros();
+  disablePCINT(digitalPinToPCINT(6));
+}
+
+void DInterrupt(){
+  DLow = micros();
+  disablePCINT(digitalPinToPCINT(7));
+}
+
 void loop() {
   Time = micros();
   // Als alle microfoons een seconde geleden zijn geactiveerd dan
@@ -51,11 +73,6 @@ void loop() {
     float DX = (340.29*((float)BLow-(float)ALow)/1000000.0);
     float DY = (340.29*((float)CLow-(float)ALow)/1000000.0);
     float DZ = (340.29*((float)DLow-(float)ALow)/1000000.0);
-    //Zet tijd op ongedefinieerd
-    ALow = -1;
-    BLow = -1;
-    CLow = -1;
-    DLow = -1;
 //    Serial.print(DX);
 //    Serial.print(',');
 //    Serial.print(DY);
@@ -88,12 +105,13 @@ void loop() {
     }
     digitalWrite(LED_BUILTIN,LOW);
   }
-  else if (
+  if (
       (Time-ALow > 1000000 or ALow == -1) and 
       (Time-BLow > 1000000 or BLow == -1) and 
       (Time-CLow > 1000000 or CLow == -1) and 
       (Time-DLow > 1000000 or DLow == -1))
   {
+    //reset ALow-DLow en heractiveer alle interrupts
     ALow = -1;
     BLow = -1;
     CLow = -1;
@@ -102,36 +120,6 @@ void loop() {
     enablePCINT(digitalPinToPCINT(5));
     enablePCINT(digitalPinToPCINT(6));
     enablePCINT(digitalPinToPCINT(7));
-  }
-}
-
-//Als tijd ongedefinieerd:
-//Zet tijd als huidige tijd
-void AInterrupt(){
-  if (ALow == -1){
-    ALow = micros();
-    disablePCINT(digitalPinToPCINT(4));
-  }
-}
-
-void BInterrupt(){
-  if (BLow == -1){
-    BLow = micros();
-    disablePCINT(digitalPinToPCINT(5));
-  }
-}
-
-void CInterrupt(){
-  if (CLow == -1){
-    CLow = micros();
-    disablePCINT(digitalPinToPCINT(6));
-  }
-}
-
-void DInterrupt(){
-  if (DLow == -1){
-    DLow = micros();
-    disablePCINT(digitalPinToPCINT(7));
   }
 }
 
